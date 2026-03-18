@@ -1,11 +1,12 @@
 package com.mad.movieexplorer.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,8 +19,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Star
-import androidx.compose.material.icons.outlined.Theaters
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilterChip
@@ -38,6 +37,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.mad.movieexplorer.domain.model.Movie
+import com.mad.movieexplorer.domain.model.Rental
 import com.mad.movieexplorer.ui.theme.DeepOcean
 import com.mad.movieexplorer.ui.theme.Night
 
@@ -60,8 +60,11 @@ fun GenreTag(
 fun MoviePosterCard(
     movie: Movie,
     isFavourite: Boolean,
+    activeRental: Rental?,
     onToggleFavourite: () -> Unit,
     onRentClick: () -> Unit,
+    onIncreaseDays: () -> Unit,
+    onDecreaseDays: () -> Unit,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -71,7 +74,8 @@ fun MoviePosterCard(
             .width(220.dp)
             .height(320.dp),
         shape = RoundedCornerShape(28.dp),
-        colors = CardDefaults.cardColors(containerColor = DeepOcean.copy(alpha = 0.92f))
+        colors = CardDefaults.cardColors(containerColor = DeepOcean.copy(alpha = 0.26f)),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f))
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             AsyncImage(
@@ -101,7 +105,12 @@ fun MoviePosterCard(
                     .padding(14.dp)
                     .align(Alignment.TopEnd)
                     .background(
-                        color = Night.copy(alpha = 0.45f),
+                        color = Night.copy(alpha = 0.28f),
+                        shape = CircleShape
+                    )
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
                         shape = CircleShape
                     )
             ) {
@@ -163,12 +172,13 @@ fun MoviePosterCard(
                         }
                     }
 
-                    Button(
-                        onClick = onRentClick,
-                        shape = RoundedCornerShape(50)
-                    ) {
-                        Text(text = "Rent")
-                    }
+                    RentalDayControl(
+                        activeRental = activeRental,
+                        onRentClick = onRentClick,
+                        onIncreaseDays = onIncreaseDays,
+                        onDecreaseDays = onDecreaseDays,
+                        compact = true
+                    )
                 }
             }
         }
@@ -179,8 +189,11 @@ fun MoviePosterCard(
 fun MovieRowCard(
     movie: Movie,
     isFavourite: Boolean,
+    activeRental: Rental?,
     onToggleFavourite: () -> Unit,
     onRentClick: () -> Unit,
+    onIncreaseDays: () -> Unit,
+    onDecreaseDays: () -> Unit,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -189,8 +202,9 @@ fun MovieRowCard(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(28.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.96f)
-        )
+            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.28f)
+        ),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
     ) {
         Row(
             modifier = Modifier
@@ -276,18 +290,13 @@ fun MovieRowCard(
                     overflow = TextOverflow.Ellipsis
                 )
 
-                Spacer(modifier = Modifier.height(14.dp))
-
-                Button(
-                    onClick = onRentClick,
-                    shape = RoundedCornerShape(18.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Theaters,
-                        contentDescription = null
+                Row(modifier = Modifier.padding(top = 14.dp)) {
+                    RentalDayControl(
+                        activeRental = activeRental,
+                        onRentClick = onRentClick,
+                        onIncreaseDays = onIncreaseDays,
+                        onDecreaseDays = onDecreaseDays
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "Rent now")
                 }
             }
         }

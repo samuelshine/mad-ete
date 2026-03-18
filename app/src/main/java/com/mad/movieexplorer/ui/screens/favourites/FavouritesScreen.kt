@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.mad.movieexplorer.domain.model.Movie
+import com.mad.movieexplorer.domain.model.Rental
 import com.mad.movieexplorer.ui.components.EmptyStateView
 import com.mad.movieexplorer.ui.components.LoadingView
 import com.mad.movieexplorer.ui.components.MovieRowCard
@@ -20,9 +21,12 @@ import com.mad.movieexplorer.viewmodel.FavouritesUiState
 @Composable
 fun FavouritesScreen(
     uiState: FavouritesUiState,
+    rentalsByMovieId: Map<String, Rental>,
     onMovieClick: (String) -> Unit,
     onToggleFavourite: (String) -> Unit,
-    onRentMovie: (Movie) -> Unit
+    onRentMovie: (Movie) -> Unit,
+    onIncreaseRentalDays: (Movie) -> Unit,
+    onDecreaseRentalDays: (String) -> Unit
 ) {
     if (uiState.isLoading && uiState.favouriteMovies.isEmpty()) {
         LoadingView(message = "Loading favourites...")
@@ -39,7 +43,7 @@ fun FavouritesScreen(
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(20.dp),
+        contentPadding = PaddingValues(start = 20.dp, top = 20.dp, end = 20.dp, bottom = 140.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item {
@@ -60,8 +64,11 @@ fun FavouritesScreen(
             MovieRowCard(
                 movie = movie,
                 isFavourite = true,
+                activeRental = rentalsByMovieId[movie.id],
                 onToggleFavourite = { onToggleFavourite(movie.id) },
                 onRentClick = { onRentMovie(movie) },
+                onIncreaseDays = { onIncreaseRentalDays(movie) },
+                onDecreaseDays = { onDecreaseRentalDays(movie.id) },
                 onClick = { onMovieClick(movie.id) }
             )
         }

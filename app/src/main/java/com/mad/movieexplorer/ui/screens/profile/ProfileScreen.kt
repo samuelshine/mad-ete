@@ -6,15 +6,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.mad.movieexplorer.ui.components.GlassSurface
 
 @Composable
 fun ProfileScreen(
@@ -26,7 +24,7 @@ fun ProfileScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp),
+            .padding(start = 20.dp, top = 20.dp, end = 20.dp, bottom = 120.dp),
         verticalArrangement = Arrangement.spacedBy(18.dp)
     ) {
         Text(
@@ -40,11 +38,8 @@ fun ProfileScreen(
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
-        Card(
-            shape = RoundedCornerShape(28.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.96f)
-            )
+        GlassSurface(
+            shape = androidx.compose.foundation.shape.RoundedCornerShape(28.dp)
         ) {
             Column(modifier = Modifier.padding(20.dp)) {
                 Text(
@@ -79,7 +74,7 @@ fun ProfileScreen(
 
         Button(
             onClick = onLogout,
-            shape = RoundedCornerShape(22.dp)
+            shape = androidx.compose.foundation.shape.RoundedCornerShape(22.dp)
         ) {
             Text(text = "Logout")
         }
@@ -92,12 +87,9 @@ private fun StatCard(
     title: String,
     value: String
 ) {
-    Card(
+    GlassSurface(
         modifier = modifier,
-        shape = RoundedCornerShape(28.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
-        )
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(28.dp)
     ) {
         Column(modifier = Modifier.padding(18.dp)) {
             Text(

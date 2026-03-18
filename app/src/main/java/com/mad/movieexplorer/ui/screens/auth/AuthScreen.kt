@@ -7,12 +7,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -22,6 +20,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.mad.movieexplorer.ui.components.GlassSurface
 import com.mad.movieexplorer.ui.theme.DeepOcean
 import com.mad.movieexplorer.ui.theme.Night
 import com.mad.movieexplorer.ui.theme.SurfaceHigh
@@ -62,11 +61,8 @@ fun AuthScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            Card(
-                shape = RoundedCornerShape(32.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
-                )
+            GlassSurface(
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(32.dp)
             ) {
                 Column(
                     modifier = Modifier
@@ -94,7 +90,13 @@ fun AuthScreen(
                         onValueChange = onEmailChange,
                         modifier = Modifier.fillMaxWidth(),
                         label = { Text("Email") },
-                        singleLine = true
+                        singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.2f),
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.14f),
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+                        )
                     )
 
                     OutlinedTextField(
@@ -103,7 +105,13 @@ fun AuthScreen(
                         modifier = Modifier.fillMaxWidth(),
                         label = { Text("Password") },
                         singleLine = true,
-                        visualTransformation = PasswordVisualTransformation()
+                        visualTransformation = PasswordVisualTransformation(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.2f),
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.14f),
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+                        )
                     )
 
                     if (!uiState.message.isNullOrBlank()) {
@@ -118,7 +126,7 @@ fun AuthScreen(
                         onClick = onSubmit,
                         modifier = Modifier.fillMaxWidth(),
                         enabled = !uiState.isSubmitting,
-                        shape = RoundedCornerShape(20.dp)
+                        shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp)
                     ) {
                         Text(
                             text = if (uiState.isSubmitting) {

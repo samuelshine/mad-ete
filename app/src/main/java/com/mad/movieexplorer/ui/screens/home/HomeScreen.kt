@@ -2,6 +2,7 @@ package com.mad.movieexplorer.ui.screens.home
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,7 +17,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,9 +33,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.mad.movieexplorer.domain.model.Movie
+import com.mad.movieexplorer.domain.model.Rental
 import com.mad.movieexplorer.ui.components.InlineErrorCard
 import com.mad.movieexplorer.ui.components.LoadingView
 import com.mad.movieexplorer.ui.components.MoviePosterCard
+import com.mad.movieexplorer.ui.components.RentalDayControl
 import com.mad.movieexplorer.ui.components.formatRating
 import com.mad.movieexplorer.ui.theme.Night
 import com.mad.movieexplorer.viewmodel.MovieUiState
@@ -45,9 +47,12 @@ import com.mad.movieexplorer.viewmodel.MovieUiState
 fun HomeScreen(
     uiState: MovieUiState,
     favouriteIds: Set<String>,
+    rentalsByMovieId: Map<String, Rental>,
     onMovieClick: (String) -> Unit,
     onToggleFavourite: (String) -> Unit,
     onRentMovie: (Movie) -> Unit,
+    onIncreaseRentalDays: (Movie) -> Unit,
+    onDecreaseRentalDays: (String) -> Unit,
     onRefresh: () -> Unit
 ) {
     if (uiState.isLoading && uiState.movies.isEmpty()) {
@@ -62,7 +67,7 @@ fun HomeScreen(
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 28.dp),
+            contentPadding = PaddingValues(bottom = 140.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             item {
@@ -87,8 +92,11 @@ fun HomeScreen(
                 item {
                     FeaturedMovieBanner(
                         movie = featuredMovie,
+                        activeRental = rentalsByMovieId[featuredMovie.id],
                         onClick = { onMovieClick(featuredMovie.id) },
-                        onRentMovie = { onRentMovie(featuredMovie) }
+                        onRentMovie = { onRentMovie(featuredMovie) },
+                        onIncreaseDays = { onIncreaseRentalDays(featuredMovie) },
+                        onDecreaseDays = { onDecreaseRentalDays(featuredMovie.id) }
                     )
                 }
             }
@@ -119,8 +127,11 @@ fun HomeScreen(
                             MoviePosterCard(
                                 movie = movie,
                                 isFavourite = movie.id in favouriteIds,
+                                activeRental = rentalsByMovieId[movie.id],
                                 onToggleFavourite = { onToggleFavourite(movie.id) },
                                 onRentClick = { onRentMovie(movie) },
+                                onIncreaseDays = { onIncreaseRentalDays(movie) },
+                                onDecreaseDays = { onDecreaseRentalDays(movie.id) },
                                 onClick = { onMovieClick(movie.id) }
                             )
                         }
@@ -134,8 +145,11 @@ fun HomeScreen(
 @Composable
 private fun FeaturedMovieBanner(
     movie: Movie,
+    activeRental: Rental?,
     onClick: () -> Unit,
-    onRentMovie: () -> Unit
+    onRentMovie: () -> Unit,
+    onIncreaseDays: () -> Unit,
+    onDecreaseDays: () -> Unit
 ) {
     Card(
         onClick = onClick,
@@ -143,7 +157,8 @@ private fun FeaturedMovieBanner(
             .fillMaxWidth()
             .padding(horizontal = 20.dp),
         shape = RoundedCornerShape(32.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.26f)),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f))
     ) {
         Box(
             modifier = Modifier
@@ -210,9 +225,12 @@ private fun FeaturedMovieBanner(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Button(onClick = onRentMovie) {
-                        Text(text = "Rent instantly")
-                    }
+                    RentalDayControl(
+                        activeRental = activeRental,
+                        onRentClick = onRentMovie,
+                        onIncreaseDays = onIncreaseDays,
+                        onDecreaseDays = onDecreaseDays
+                    )
                 }
             }
         }

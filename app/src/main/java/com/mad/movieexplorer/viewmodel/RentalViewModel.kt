@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 
 data class RentalUiState(
     val rentals: List<Rental> = emptyList(),
+    val rentalsByMovieId: Map<String, Rental> = emptyMap(),
     val totalPrice: Double = 0.0,
     val message: String? = null
 )
@@ -49,7 +50,25 @@ class RentalViewModel(
 
     fun decreaseDays(rental: Rental) {
         viewModelScope.launch {
-            rentalRepository.updateRentalDays(rental.id, (rental.days - 1).coerceAtLeast(1))
+            rentalRepository.updateRentalDays(rental.id, rental.days - 1)
+        }
+    }
+
+    fun increaseDaysForMovie(movie: Movie) {
+        viewModelScope.launch {
+            val rental = _uiState.value.rentalsByMovieId[movie.id]
+            if (rental == null) {
+                rentMovie(movie, 1)
+            } else {
+                rentalRepository.updateRentalDays(rental.id, rental.days + 1)
+            }
+        }
+    }
+
+    fun decreaseDaysForMovie(movieId: String) {
+        viewModelScope.launch {
+            val rental = _uiState.value.rentalsByMovieId[movieId] ?: return@launch
+            rentalRepository.updateRentalDays(rental.id, rental.days - 1)
         }
     }
 
@@ -69,6 +88,7 @@ class RentalViewModel(
                 _uiState.update {
                     it.copy(
                         rentals = rentals,
+                        rentalsByMovieId = rentals.associateBy(Rental::movieId),
                         totalPrice = rentals.sumOf(Rental::totalPrice)
                     )
                 }

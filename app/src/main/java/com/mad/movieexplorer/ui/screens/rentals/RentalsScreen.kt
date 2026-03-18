@@ -7,18 +7,14 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.mad.movieexplorer.domain.model.Rental
 import com.mad.movieexplorer.ui.components.EmptyStateView
+import com.mad.movieexplorer.ui.components.GlassSurface
 import com.mad.movieexplorer.ui.components.formatCurrency
 import com.mad.movieexplorer.ui.components.formatRating
 import com.mad.movieexplorer.viewmodel.RentalUiState
@@ -54,7 +51,7 @@ fun RentalsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 20.dp, vertical = 16.dp)
+            .padding(start = 20.dp, top = 16.dp, end = 20.dp, bottom = 120.dp)
     ) {
         Text(
             text = "Rentals",
@@ -83,12 +80,9 @@ fun RentalsScreen(
             }
         }
 
-        Card(
+        GlassSurface(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(28.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.96f)
-            )
+            shape = androidx.compose.foundation.shape.RoundedCornerShape(28.dp)
         ) {
             Row(
                 modifier = Modifier
@@ -126,11 +120,8 @@ private fun RentalItemCard(
     onDecreaseDays: () -> Unit,
     onRemoveRental: () -> Unit
 ) {
-    Card(
-        shape = RoundedCornerShape(28.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.96f)
-        )
+    GlassSurface(
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(28.dp)
     ) {
         Row(
             modifier = Modifier
@@ -143,7 +134,7 @@ private fun RentalItemCard(
                 contentDescription = rental.title,
                 modifier = Modifier
                     .size(width = 96.dp, height = 138.dp)
-                    .clip(RoundedCornerShape(22.dp)),
+                    .clip(androidx.compose.foundation.shape.RoundedCornerShape(22.dp)),
                 contentScale = ContentScale.Crop
             )
 

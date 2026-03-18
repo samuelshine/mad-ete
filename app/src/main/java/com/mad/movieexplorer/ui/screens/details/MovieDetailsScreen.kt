@@ -1,6 +1,7 @@
 package com.mad.movieexplorer.ui.screens.details
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -26,7 +27,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -41,16 +41,23 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.mad.movieexplorer.domain.model.Movie
+import com.mad.movieexplorer.domain.model.Rental
 import com.mad.movieexplorer.ui.components.EmptyStateView
+import com.mad.movieexplorer.ui.components.GlassSurface
 import com.mad.movieexplorer.ui.components.GenreTag
+import com.mad.movieexplorer.ui.components.RentalDayControl
+import com.mad.movieexplorer.ui.components.formatCurrency
 import com.mad.movieexplorer.ui.components.formatRating
 
 @Composable
 fun MovieDetailsScreen(
     movie: Movie?,
+    activeRental: Rental?,
     isFavourite: Boolean,
     onToggleFavourite: () -> Unit,
-    onRentMovie: (Int) -> Unit
+    onRentMovie: (Int) -> Unit,
+    onIncreaseDays: () -> Unit,
+    onDecreaseDays: () -> Unit
 ) {
     if (movie == null) {
         EmptyStateView(
@@ -113,10 +120,7 @@ fun MovieDetailsScreen(
         }
 
         item {
-            Surface(
-                shape = RoundedCornerShape(24.dp),
-                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.42f)
-            ) {
+            GlassSurface(shape = RoundedCornerShape(24.dp)) {
                 Row(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -202,13 +206,30 @@ fun MovieDetailsScreen(
                     }
                 }
 
-                Button(
-                    onClick = { onRentMovie(rentalDays) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp)
-                ) {
-                    Text(text = "Rent movie")
+                if (activeRental != null) {
+                    Text(
+                        text = "Active total: ${formatCurrency(activeRental.totalPrice)}",
+                        modifier = Modifier.padding(top = 12.dp),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Row(modifier = Modifier.padding(top = 16.dp)) {
+                        RentalDayControl(
+                            activeRental = activeRental,
+                            onRentClick = { onRentMovie(rentalDays) },
+                            onIncreaseDays = onIncreaseDays,
+                            onDecreaseDays = onDecreaseDays
+                        )
+                    }
+                } else {
+                    Button(
+                        onClick = { onRentMovie(rentalDays) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp)
+                    ) {
+                        Text(text = "Rent movie")
+                    }
                 }
             }
         }
@@ -223,8 +244,9 @@ private fun DetailCard(
     Card(
         shape = RoundedCornerShape(28.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.94f)
-        )
+            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.28f)
+        ),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
     ) {
         Column(
             modifier = Modifier.padding(18.dp),
