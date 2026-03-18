@@ -105,7 +105,8 @@ fun MovieExplorerNavGraph(
 
     val showTopBar = !authState.isLoadingSession &&
         currentRoute != null &&
-        currentRoute != AppDestination.Auth.route
+        currentRoute != AppDestination.Auth.route &&
+        currentRoute != AppDestination.Details.route
     val showBottomBar = showTopBar && currentRoute != AppDestination.Details.route
     val showHomeActions = currentRoute == AppDestination.Home.route
 
@@ -294,6 +295,7 @@ fun MovieExplorerNavGraph(
                             movie = movie,
                             activeRental = rentalState.rentalsByMovieId[movieId],
                             isFavourite = movieId in favouritesState.favouriteIds,
+                            onBackClick = { navController.popBackStack() },
                             onToggleFavourite = { favouritesViewModel.toggleFavourite(movieId) },
                             onRentMovie = { days ->
                                 movie?.let { rentalViewModel.rentMovie(it, days) }
